@@ -229,12 +229,10 @@ $grid-input-padding: 7px;
 $grid-input-margin: 3px;
 $grid-input-height-with-margin: calc(#{$grid-height-unit} - (#{$grid-input-margin} * 2));
 
-@media screen and (min-width: 1380px) {
-	section {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-column-gap: 20px;
-	}
+section {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	grid-column-gap: 20px;
 }
 
 /* General details item styles */
@@ -259,7 +257,10 @@ contactdetails {
 
 propertygroup {
 	display: block;
-	padding-bottom: $grid-height-unit;
+	&:not(.property-adr){
+		/* adr detailsitem already have bottom padding */
+		padding-bottom: $grid-height-unit;
+	}
 	.propertyGroup__title {
 		display: flex;
 		align-items: center;
@@ -278,6 +279,29 @@ propertygroup {
 	}
 }
 
+@mixin generate-grid-span($default-unit) {
+	/* we only supports 10 props of the same type */
+	@for $i from 1 through 10 {
+		&.grid-span-#{$i} {
+			/* default unit + title + bottom padding */
+			grid-row-start: span calc(2 + #{$i} * #{$default-unit});
+		}
+	}
+}
+
+/* GRID SETTINGS*/
+propertygroup {
+	@include generate-grid-span(1);
+	&.property-adr {
+		@include generate-grid-span(8);
+	}
+	&.property-n {
+		@include generate-grid-span(7);
+	}
+	&.property-note {
+		@include generate-grid-span(5);
+	}
+}
 
 detailsitem input[type="tel"],
 detailsitem input[type="email"],
